@@ -14,7 +14,7 @@ public static class CsvWriter
         var dataList = DictionaryToDynamicList(data);
 
         using var writer = new StringWriter();
-        using var csvWriter = new CsvHelper.CsvWriter(writer, CultureInfo.InvariantCulture);
+        using var csvWriter = new CsvHelper.CsvWriter(writer, CultureInfo.CurrentCulture);
 
         csvWriter.WriteRecords(dataList);
         var csvString = writer.ToString();

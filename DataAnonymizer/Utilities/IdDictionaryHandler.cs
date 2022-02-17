@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace Anonymizer.Utilities
@@ -72,7 +73,7 @@ namespace Anonymizer.Utilities
                 if (directory is not null)
                     Directory.CreateDirectory(directory);
 
-                File.WriteAllText(path, serializedData);
+                File.WriteAllText(path, serializedData, Encoding.GetEncoding("iso-8859-1"));
             }
             catch (IOException ex) 
             {
@@ -88,7 +89,7 @@ namespace Anonymizer.Utilities
         {
             try
             {
-                var serializedData = File.ReadAllText(path);
+                var serializedData = File.ReadAllText(path, Encoding.GetEncoding("iso-8859-1"));
                 var wrappedData = JsonSerializer.Deserialize<DataWrapper>(serializedData);
 
                 if (wrappedData is null)

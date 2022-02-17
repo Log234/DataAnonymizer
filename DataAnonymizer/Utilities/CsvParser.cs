@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using Anonymizer.Exceptions;
 using CSharpFunctionalExtensions;
+using CsvHelper.Configuration;
 
 namespace Anonymizer.Utilities;
 
@@ -25,7 +26,7 @@ internal static class CsvParser
         try
         {
             using var reader = new StreamReader(path, Encoding.GetEncoding("iso-8859-1"));
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            using var csv = new CsvReader(reader, CultureInfo.CurrentCulture);
 
             List<dynamic> records = csv.GetRecords<dynamic>().ToList();
 
