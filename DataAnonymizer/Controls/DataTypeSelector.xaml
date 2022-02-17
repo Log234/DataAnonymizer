@@ -1,0 +1,17 @@
+﻿<UserControl
+    x:Class="Anonymizer.Controls.DataTypeSelector"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <TextBlock x:Name="DataTypeName" Width="120" />
+        <TextBlock x:Name="Example" Width="120" />
+        <CheckBox x:Name="Anonymize">Anonymize</CheckBox>
+        <RadioButton x:Name="RbGeneral" Content="General" Width="30" IsChecked="True" />
+        <RadioButton x:Name="RbName" Content="Name" Width="30" />
+        <RadioButton x:Name="RbCompany" Content="Company" Width="30" />
+    </StackPanel>
+</UserControl>

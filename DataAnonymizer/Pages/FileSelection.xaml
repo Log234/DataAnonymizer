@@ -1,0 +1,39 @@
+﻿<Page
+    x:Class="Anonymizer.Pages.FileSelection"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Anonymizer.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel HorizontalAlignment="Center" Grid.Row="0" Margin="0,70,0,0">
+            <TextBlock FontSize="50">Select data and key file</TextBlock>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10">
+                <TextBox x:Name="DataFilePath" PlaceholderText="Data file path" Width="600" />
+                <Button x:Name="SelectDataFile" Click="SelectDataFile_ClickAsync" Margin="10,0,0,0" Width="120">Select data file</Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBox x:Name="KeyFilePath"  PlaceholderText="Key file path" Width="600" />
+                <Button x:Name="SelectKeyFile" Click="SelectKeyFile_ClickAsync" Margin="10,0,0,0" Width="120">Select key file</Button>
+            </StackPanel>
+        </StackPanel>
+        <Grid VerticalAlignment="Bottom" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Margin="0,0,150,50" FontSize="20" x:Name="NextPage" Click="Next_Click" Grid.Column="2">Next</Button>
+        </Grid>
+    </Grid>
+</Page>
