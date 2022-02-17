@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using WinRT;
 
-namespace Anonymizer.Extensions;
+namespace DataAnonymizer.Utilities;
 
 public class FilePickers
 {

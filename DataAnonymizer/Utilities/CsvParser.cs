@@ -1,15 +1,14 @@
 ﻿using System;
-using CsvHelper;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Anonymizer.Exceptions;
 using CSharpFunctionalExtensions;
-using CsvHelper.Configuration;
+using CsvHelper;
+using DataAnonymizer.Exceptions;
 
-namespace Anonymizer.Utilities;
+namespace DataAnonymizer.Utilities;
 
 internal static class CsvParser
 {

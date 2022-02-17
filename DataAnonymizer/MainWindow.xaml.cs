@@ -1,14 +1,14 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
-using Anonymizer.Pages;
+using DataAnonymizer.Pages;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using WinRT;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace Anonymizer
+namespace DataAnonymizer
 {
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.

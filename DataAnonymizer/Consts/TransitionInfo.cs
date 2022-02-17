@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Media.Animation;
 
-namespace Anonymizer.Consts
+namespace DataAnonymizer.Consts
 {
     internal static class TransitionInfo
     {

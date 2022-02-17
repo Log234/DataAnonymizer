@@ -1,12 +1,12 @@
-﻿using CSharpFunctionalExtensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CSharpFunctionalExtensions;
 
-namespace Anonymizer.Utilities;
+namespace DataAnonymizer.Utilities;
 
-internal static class DataCleaner
+public static class DataCleaner
 {
     private const bool AllowShortenedNames = false;
 
@@ -113,7 +113,7 @@ internal static class DataCleaner
 
     public static Result<string> CompanyCleaning(string input)
     {
-        var companyRegex = new Regex(@"^[aA]\/?[sS][aA]?\z");
+        var companyRegex = new Regex(@"^[aA](\/ | \.)?[sS][aA.]?\z");
 
         var cleanedInput = input.Trim();
 

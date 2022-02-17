@@ -1,4 +1,4 @@
-﻿namespace Anonymizer.Utilities;
+﻿namespace DataAnonymizer.Utilities;
 
 public enum ColumnTypes
 {

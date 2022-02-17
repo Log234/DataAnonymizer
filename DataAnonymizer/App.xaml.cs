@@ -1,11 +1,11 @@
-﻿using Microsoft.UI.Xaml;
-using System.Collections.Generic;
-using Anonymizer.Utilities;
+﻿using System.Collections.Generic;
+using DataAnonymizer.Utilities;
+using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace Anonymizer
+namespace DataAnonymizer
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.

@@ -1,12 +1,12 @@
-﻿using CSharpFunctionalExtensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using CSharpFunctionalExtensions;
 
-namespace Anonymizer.Utilities
+namespace DataAnonymizer.Utilities
 {
     internal class IdDictionaryHandler : IDisposable
     {

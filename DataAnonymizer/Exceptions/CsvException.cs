@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Anonymizer.Exceptions
+namespace DataAnonymizer.Exceptions
 {
     internal class CsvException : Exception
     {

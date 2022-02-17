@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Anonymizer.Utilities;
+namespace DataAnonymizer.Utilities;
 
 public static class CsvWriter
 {

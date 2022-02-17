@@ -1,12 +1,13 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Anonymizer">
+    xmlns:local="using:Anonymizer"
+    xmlns:controls="using:DataAnonymizer.Controls">
 
-    <Style TargetType="local:DataTypeSelector" xmlns:local="using:Anonymizer.Controls">
+    <Style TargetType="controls:DataTypeSelector">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:DataTypeSelector">
+                <ControlTemplate TargetType="controls:DataTypeSelector">
                     <Border
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"

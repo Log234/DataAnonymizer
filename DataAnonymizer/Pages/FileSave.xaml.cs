@@ -1,17 +1,13 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System.IO;
+using DataAnonymizer.Consts;
+using DataAnonymizer.Utilities;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
-using System;
-using System.IO;
-using System.Text.Json;
-using Anonymizer.Consts;
-using Anonymizer.Extensions;
-using Anonymizer.Utilities;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace Anonymizer.Pages
+namespace DataAnonymizer.Pages
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
