@@ -1,9 +1,9 @@
 {
   "profiles": {
-    "Test (Package)": {
+    "DataAnonymizer (Package)": {
       "commandName": "MsixPackage"
     },
-    "Test (Unpackaged)": {
+    "DataAnonymizer (Unpackaged)": {
       "commandName": "Project"
     }
   }
