@@ -62,7 +62,7 @@ public sealed partial class FileSelection : Page
             window.AddMessage(new InfoBar
             {
                 Severity = InfoBarSeverity.Error,
-                Title = $"An error occurred trying to load the data file: {parseResult.Error}",
+                Title = $"An error occurred trying to load the data file:\n{parseResult.Error}",
                 IsOpen = true
             });
             return;
@@ -128,7 +128,7 @@ public sealed partial class FileSelection : Page
             window.AddMessage(new InfoBar
             {
                 Severity = InfoBarSeverity.Error,
-                Title = $"Failed to load the key file: {isEncryptedResult.Error}",
+                Title = $"Failed to load the key file:\n{isEncryptedResult.Error}",
                 IsOpen = true
             });
             return;
@@ -148,7 +148,7 @@ public sealed partial class FileSelection : Page
                 window.AddMessage(new InfoBar
                 {
                     Severity = InfoBarSeverity.Error,
-                    Title = $"Failed to read the key file content: {dictionaryResult.Error}",
+                    Title = $"Failed to read the key file content:\n{dictionaryResult.Error}",
                     IsOpen = true
                 });
                 return;

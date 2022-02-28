@@ -7,8 +7,8 @@
     mc:Ignorable="d">
 
     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-        <TextBlock x:Name="DataTypeName" Width="120" />
-        <TextBlock x:Name="Example" Width="120" />
+        <TextBlock x:Name="DataTypeName" Width="200" />
+        <TextBlock x:Name="Example" Width="200" />
         <CheckBox x:Name="Anonymize">Anonymize</CheckBox>
         <RadioButton x:Name="RbGeneral" Content="General" Width="30" IsChecked="True" />
         <RadioButton x:Name="RbName" Content="Name" Width="30" />

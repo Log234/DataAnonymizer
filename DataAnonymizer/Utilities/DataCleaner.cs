@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
@@ -9,6 +10,7 @@ namespace DataAnonymizer.Utilities;
 public static class DataCleaner
 {
     private const bool AllowShortenedNames = false;
+    private static TextInfo textInfo = CultureInfo.GetCultureInfo("no").TextInfo;
 
     public static Result<List<List<string>>> Clean(List<List<string>> input, (bool, ColumnTypes)[] columnTypeDict, Dictionary<string, string> idDictionary)
     {
@@ -65,7 +67,7 @@ public static class DataCleaner
                 data[index] = SwitchWithIds(data[index], idDictionary).ToList();
         }
 
-        var combinedResults = Result.Combine(results);
+        var combinedResults = Result.Combine(results, "\n");
 
         if (combinedResults.IsFailure)
             return combinedResults.ConvertFailure<List<List<string>>>();
@@ -108,7 +110,14 @@ public static class DataCleaner
     {
         var cleanedInput = input.Trim();
 
-        var commaSplit = cleanedInput.Split(", ");
+        if (cleanedInput.Contains('(') || cleanedInput.Contains(')'))
+            return Result.Failure<string>($"The name '{cleanedInput}' contains parentheses, which is not allowed.");
+
+        if (cleanedInput.LastOrDefault() == ',')
+            cleanedInput = cleanedInput[..^1];
+
+        var casedInput = textInfo.ToTitleCase(cleanedInput);
+        var commaSplit = casedInput.Split(", ");
 
         var simplifiedName = commaSplit[0];
 
@@ -116,10 +125,10 @@ public static class DataCleaner
             simplifiedName = $"{commaSplit[1]} {commaSplit[0]}";
 
         if (commaSplit.Length > 2)
-            Result.Failure<string>($"The name '{input}' contains more than one comma and cannot be interpreted.");
+            return Result.Failure<string>($"The name '{cleanedInput}' contains more than one comma and cannot be interpreted.");
 
         if (input.Contains('.') && !AllowShortenedNames)
-            Result.Failure<string>($"The name '{input}' contains a potentially shortened name, which is not allowed.");
+            return Result.Failure<string>($"The name '{cleanedInput}' contains a potentially shortened name, which is not allowed.");
 
         return simplifiedName;
     }
@@ -130,7 +139,9 @@ public static class DataCleaner
 
         var cleanedInput = input.Trim();
 
-        var splitInput = cleanedInput.Split(" ");
+        var casedInput = textInfo.ToUpper(cleanedInput);
+
+        var splitInput = casedInput.Split(" ");
 
         if (companyRegex.IsMatch(splitInput.First()))
             return string.Join(" ", splitInput.Skip(1)) + (splitInput.First().EndsWith("a", StringComparison.InvariantCultureIgnoreCase) ? " ASA" : " AS");

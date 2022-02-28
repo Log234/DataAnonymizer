@@ -17,13 +17,13 @@
         <StackPanel x:Name="Header" HorizontalAlignment="Center" Grid.Row="0" Margin="0,70,0,70">
             <TextBlock FontSize="50">Select column types</TextBlock>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" Width="750" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}" Padding="20,10,20,10">
-            <TextBlock Width="120">Column Name</TextBlock>
-            <TextBlock Width="120">Data example</TextBlock>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" Width="900" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}" Padding="20,10,20,10">
+            <TextBlock Width="200">Column Name</TextBlock>
+            <TextBlock Width="200">Data example</TextBlock>
             <TextBlock Width="120">Anonymize field</TextBlock>
             <TextBlock Width="370">Column type</TextBlock>
         </StackPanel>
-        <ScrollViewer HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="2" Width="750" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
+        <ScrollViewer HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="2" Width="900" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
             <StackPanel x:Name="ColumnContainer" Padding="20,10,20,10">
             </StackPanel>
         </ScrollViewer>

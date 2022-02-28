@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,8 +11,8 @@ namespace DataAnonymizer.Utilities;
 
 public static class CsvParser
 {
-    private static readonly Regex QuoteStartRegex = new("^\"");
-    private static readonly Regex QuoteEndRegex = new("(?<!\")\"$");
+    private static readonly Regex QuoteStartRegex = new("^\"", RegexOptions.Singleline);
+    private static readonly Regex QuoteEndRegex = new("(?<!\")\"$", RegexOptions.Singleline);
 
     /// <summary>
     /// Parses a CSV file and returns a dictionary of header titles to lists of the respective values.
@@ -26,12 +27,12 @@ public static class CsvParser
         try
         {
             var lines = File.ReadAllLines(path, Encoding.GetEncoding("iso-8859-1"));
-            
+            var mergedLines = MergeQuotedNewLines(lines).ToList();
 
-            if (!lines.Any())
+            if (!mergedLines.Any())
                 return new Result<List<List<string>>>();
 
-            var rows = lines.Select(GetRow).ToList();
+            var rows = mergedLines.Select(GetRow);
 
             var rowResult = rows.Combine();
 
@@ -40,7 +41,18 @@ public static class CsvParser
 
             var columns = CsvHelperMethods.FlipAxis(rows.Select(row  => row.Value));
 
-            return columns;
+            if (columns.IsFailure)
+                return columns;
+
+            var columnEndIndex = columns.Value.Count - 1;
+
+            for (; columnEndIndex > 0; columnEndIndex--)
+            {
+                if (columns.Value[columnEndIndex].Any(value => !string.IsNullOrWhiteSpace(value)))
+                    break;
+            }
+
+            return columns.Value.Take(columnEndIndex+1).ToList();
         }
         catch (Exception e) when (e is FileNotFoundException or DirectoryNotFoundException)
         {
@@ -56,9 +68,35 @@ public static class CsvParser
         }
     }
 
+    private static IEnumerable<string> MergeQuotedNewLines(IEnumerable<string> lines)
+    {
+        var mergedLines = new List<string>();
+
+        foreach (var line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(mergedLines.LastOrDefault()))
+            {
+                mergedLines.Add(line);
+                continue;
+            }
+
+            if (mergedLines.Last().Count(character => character == '"') % 2 != 0)
+            {
+                mergedLines[mergedLines.Count - 1] = mergedLines.Last() + "\n" + line;
+                continue;
+            }
+
+            mergedLines.Add(line);
+        }
+
+        return mergedLines;
+    }
+
     private static Result<IEnumerable<string>> GetRow(string line)
     {
-        var splitLine = line.Split(",");
+        var separator = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
+
+        var splitLine = line.Split(separator);
 
         var output = new List<string>();
         string merger = null;
@@ -70,6 +108,12 @@ public static class CsvParser
                 if (merger is not null)
                     return Result.Failure<IEnumerable<string>>($"Encountered row with unbalanced quotes, a start quote was found within an open quote. The remaining text was: '{merger}'");
 
+                if (QuoteEndRegex.IsMatch(entry))
+                {
+                    output.Add(entry);
+                    continue;
+                }
+
                 merger = entry[1..];
                 continue;
             }
@@ -79,7 +123,7 @@ public static class CsvParser
                 if (merger is null)
                     return Result.Failure<IEnumerable<string>>($"Encountered row with unbalanced quotes, an end quote was found without any start quote before it. Already processed fields: {string.Join(", ", output)}.");
 
-                var merged = merger + "," + entry[..^1];
+                var merged = merger + separator + entry[..^1];
                 output.Add(merged.Replace("\"\"", "\""));
                 merger = null;
                 continue;
@@ -87,7 +131,7 @@ public static class CsvParser
 
             if (merger is not null)
             {
-                merger += "," + entry;
+                merger += separator + entry;
                 continue;
             }
             

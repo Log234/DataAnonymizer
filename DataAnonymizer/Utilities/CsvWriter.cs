@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ public static class CsvWriter
 
     private static string SerializeCsv(List<List<string>> data)
     {
+        var separator = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
         var sb = new StringBuilder();
 
         for (int i = 0; i < data.Count; i++)
@@ -25,13 +27,13 @@ public static class CsvWriter
             {
                 var escaped = column.Replace("\"", "\"\"");
 
-                if (!column.Contains(','))
+                if (!(column.Contains(separator) || column.Contains('\n')))
                     return escaped;
 
                 return $"\"{escaped}\"";
             });
 
-            sb.AppendLine(string.Join(",", row));
+            sb.AppendLine(string.Join(separator, row));
         }
 
         return sb.ToString();

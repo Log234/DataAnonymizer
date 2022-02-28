@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using DataAnonymizer.Consts;
 using DataAnonymizer.Controls;
 using DataAnonymizer.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace DataAnonymizer.Pages;
 
@@ -30,7 +26,7 @@ public sealed partial class ColumnTypeSelection : Page
         for (var index = 0; index < _app.data.Count; index++)
         {
             var columnName = _app.data[index][0];
-            var example = _app.data[index][1] ?? "";
+            var example = _app.data[index].Skip(1).FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? "";
 
             ColumnContainer.Children.Add(new DataTypeSelector(index, columnName, example.Trim()));
         }
@@ -54,7 +50,7 @@ public sealed partial class ColumnTypeSelection : Page
             window.AddMessage(new InfoBar
             {
                 Severity = InfoBarSeverity.Error,
-                Title = $"Failed to clean the data: {cleaningResult.Error}",
+                Title = $"Failed to clean the data:\n{cleaningResult.Error}",
                 IsOpen = true
             });
             return;
