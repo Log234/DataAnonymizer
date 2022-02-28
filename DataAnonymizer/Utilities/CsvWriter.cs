@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Dynamic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,52 +7,33 @@ namespace DataAnonymizer.Utilities;
 
 public static class CsvWriter
 {
-    public static void Write(Dictionary<string, List<string>> data, string path)
+    public static void Write(List<List<string>> data, string path)
     {
-        var dataList = DictionaryToDynamicList(data);
-
-        using var writer = new StringWriter();
-        using var csvWriter = new CsvHelper.CsvWriter(writer, CultureInfo.CurrentCulture);
-
-        csvWriter.WriteRecords(dataList);
-        var csvString = writer.ToString();
+        var flippedAxisData = CsvHelperMethods.FlipAxis(data);
+        var csvString = SerializeCsv(flippedAxisData.Value);
 
         File.WriteAllText(path, csvString, Encoding.GetEncoding("iso-8859-1"));
     }
 
-    public static IEnumerable<dynamic> DictionaryToDynamicList(Dictionary<string, List<string>> data)
+    private static string SerializeCsv(List<List<string>> data)
     {
-        if (data.Count == 0)
-            return new List<dynamic>();
+        var sb = new StringBuilder();
 
-        var length = data.First().Value.Count;
-
-        List<dynamic> dynamicList = new(length);
-
-        bool first = true;
-        foreach (var kvPair in data)
+        for (int i = 0; i < data.Count; i++)
         {
-            if (first)
+            var row = data[i].Select(column =>
             {
-                foreach (var field in kvPair.Value)
-                {
-                    IDictionary<string, object> newObject = new ExpandoObject();
-                    newObject.Add(kvPair.Key, field);
+                var escaped = column.Replace("\"", "\"\"");
 
-                    dynamicList.Add(newObject);
-                }
+                if (!column.Contains(','))
+                    return escaped;
 
-                first = false;
-            }
-            else
-            {
-                for (int i = 0; i < kvPair.Value.Count; i++)
-                {
-                    ((IDictionary<string, object>)dynamicList[i]).Add(kvPair.Key, kvPair.Value[i]);
-                }
-            }
+                return $"\"{escaped}\"";
+            });
+
+            sb.AppendLine(string.Join(",", row));
         }
 
-        return dynamicList;
+        return sb.ToString();
     }
 }

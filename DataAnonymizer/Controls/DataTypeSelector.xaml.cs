@@ -9,16 +9,16 @@ namespace DataAnonymizer.Controls;
 
 public sealed partial class DataTypeSelector : UserControl
 {
-    public readonly string ColumnName;
+    public readonly int index;
     public bool ShouldAnonymize => Anonymize.IsChecked ?? false;
     public ColumnTypes ColumnType { get; private set; }
 
-    public DataTypeSelector(string name, string example)
+    public DataTypeSelector(int index, string name, string example)
     {
-        var app = Application.Current as App;
+        var app = (App)Application.Current;
 
         InitializeComponent();
-        ColumnName = name;
+        this.index = index;
 
         DataTypeName.Text = name;
         Example.Text = example;
@@ -26,26 +26,26 @@ public sealed partial class DataTypeSelector : UserControl
         RbName.GroupName = name;
         RbCompany.GroupName = name;
 
-        if (app.columnTypeDict.ContainsKey(name))
+        var shouldAnonymize = false;
+
+        if (app.columnTypeDict.Length > index)
+            (shouldAnonymize, ColumnType) = app.columnTypeDict[index];
+
+        Anonymize.IsChecked = shouldAnonymize;
+
+        switch (ColumnType)
         {
-            (var shouldAnonymize, ColumnType) = app.columnTypeDict[name];
-
-            Anonymize.IsChecked = shouldAnonymize;
-
-            switch (ColumnType)
-            {
-                case ColumnTypes.General:
-                    RbGeneral.IsChecked = true;
-                    break;
-                case ColumnTypes.Name:
-                    RbName.IsChecked = true;
-                    break;
-                case ColumnTypes.Company:
-                    RbCompany.IsChecked = true;
-                    break;
-                default:
-                    break;
-            }
+            case ColumnTypes.General:
+                RbGeneral.IsChecked = true;
+                break;
+            case ColumnTypes.Name:
+                RbName.IsChecked = true;
+                break;
+            case ColumnTypes.Company:
+                RbCompany.IsChecked = true;
+                break;
+            default:
+                break;
         }
             
         RbGeneral.Checked += (s, e) => ColumnType = ColumnTypes.General;

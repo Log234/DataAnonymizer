@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using DataAnonymizer.Consts;
 using DataAnonymizer.Controls;
 using DataAnonymizer.Utilities;
@@ -15,22 +16,23 @@ namespace DataAnonymizer.Pages;
 /// </summary>
 public sealed partial class ColumnTypeSelection : Page
 {
-    private App app;
+    private readonly App _app;
 
     public ColumnTypeSelection()
     {
-        this.InitializeComponent();
-        app = Application.Current as App;
-        this.ColumnContainer.Children.Clear();
+        InitializeComponent();
+        _app = (App)Application.Current;
+        ColumnContainer.Children.Clear();
 
-        foreach (var columnName in app.data.Keys)
+        if (_app.data.Count < 2)
+            return;
+
+        for (var index = 0; index < _app.data.Count; index++)
         {
-            var example = "";
+            var columnName = _app.data[index][0];
+            var example = _app.data[index][1] ?? "";
 
-            if (app.data.ContainsKey(columnName))
-                example = app.data[columnName].FirstOrDefault() ?? "";
-
-            ColumnContainer.Children.Add(new DataTypeSelector(columnName, example.Trim()));
+            ColumnContainer.Children.Add(new DataTypeSelector(index, columnName, example.Trim()));
         }
     }
 
@@ -42,10 +44,10 @@ public sealed partial class ColumnTypeSelection : Page
 
     private void Next_Click(object sender, RoutedEventArgs e)
     {
-        var window = (MainWindow)app.m_window;
+        var window = (MainWindow)_app.m_window;
 
         StoreSelection();
-        var cleaningResult = DataCleaner.Clean(app.data, app.columnTypeDict, app.idDictionary);
+        var cleaningResult = DataCleaner.Clean(_app.data, _app.columnTypeDict, _app.idDictionary);
 
         if (cleaningResult.IsFailure)
         {
@@ -58,7 +60,7 @@ public sealed partial class ColumnTypeSelection : Page
             return;
         }
 
-        app.data = cleaningResult.Value;
+        _app.data = cleaningResult.Value;
 
 
 
@@ -67,9 +69,9 @@ public sealed partial class ColumnTypeSelection : Page
 
     private void StoreSelection()
     {
-        foreach (DataTypeSelector column in ColumnContainer.Children)
+        foreach (DataTypeSelector column in ColumnContainer.Children.Where(child => child is DataTypeSelector))
         {
-            app.columnTypeDict[column.ColumnName] = (column.ShouldAnonymize, column.ColumnType);
+            _app.columnTypeDict[column.index] = (column.ShouldAnonymize, column.ColumnType);
         }
     }
 }

@@ -10,61 +10,74 @@ public static class DataCleaner
 {
     private const bool AllowShortenedNames = false;
 
-    public static Result<Dictionary<string, List<string>>> Clean(Dictionary<string, List<string>> input, Dictionary<string, (bool, ColumnTypes)> columnTypeDict, Dictionary<string, string> idDictionary)
+    public static Result<List<List<string>>> Clean(List<List<string>> input, (bool, ColumnTypes)[] columnTypeDict, Dictionary<string, string> idDictionary)
     {
+        var header = input.Select(column => column.First()).ToList();
+        var data = input.Select(column => column.Skip(1).ToList()).ToList();
+
         var results = new List<Result<string>>();
 
-        foreach (var entry in input.Keys)
+        for (var index = 0; index < input.Count; index++)
         {
-            var (shouldAnonymize, columnType) = columnTypeDict[entry];
+            var (shouldAnonymize, columnType) = columnTypeDict[index];
 
             switch (columnType)
             {
                 case ColumnTypes.General:
-                    var generalResults = Clean(input[entry], GeneralStringClean).ToList();
+                    var generalResults = Clean(data[index], GeneralStringClean).ToList();
 
                     if (Result.Combine(generalResults).IsFailure)
                         results.AddRange(generalResults);
                     else
-                        input[entry] = generalResults.Select(r => r.Value).ToList();
+                        data[index] = generalResults.Select(r => r.Value).ToList();
                     break;
 
                 case ColumnTypes.Name:
-                    var nameResults = Clean(input[entry], NameCleaning).ToList();
+                    var nameResults = Clean(data[index], NameCleaning).ToList();
 
                     if (Result.Combine(nameResults).IsFailure)
                         results.AddRange(nameResults);
                     else
                     {
-                        input[entry] = nameResults.Select(r => r.Value).ToList();
+                        data[index] = nameResults.Select(r => r.Value).ToList();
                     }
+
                     break;
 
                 case ColumnTypes.Company:
-                    var companyResults = Clean(input[entry], CompanyCleaning).ToList();
+                    var companyResults = Clean(data[index], CompanyCleaning).ToList();
 
                     if (Result.Combine(companyResults).IsFailure)
                         results.AddRange(companyResults);
                     else
                     {
-                        input[entry] = companyResults.Select(r => r.Value).ToList();
+                        data[index] = companyResults.Select(r => r.Value).ToList();
                     }
+
                     break;
 
                 default:
-                    return Result.Failure<Dictionary<string, List<string>>>($"Failed to clean column: {entry}. Did not find a cleaning method matching {columnTypeDict[entry]}.");
+                    return Result.Failure<List<List<string>>>(
+                        $"Failed to clean column: {header[index]}. Did not find a cleaning method matching {columnTypeDict[index]}.");
             }
 
             if (shouldAnonymize)
-                input[entry] = SwitchWithIds(input[entry], idDictionary).ToList();
+                data[index] = SwitchWithIds(data[index], idDictionary).ToList();
         }
 
         var combinedResults = Result.Combine(results);
 
         if (combinedResults.IsFailure)
-            return combinedResults.ConvertFailure<Dictionary<string, List<string>>>();
+            return combinedResults.ConvertFailure<List<List<string>>>();
 
-        return input;
+        var output = header.Select(value => new List<string>() {value}).ToList();
+
+        for (var index = 0; index < data.Count; index++)
+        {
+            output[index].AddRange(data[index]);
+        }
+
+        return output;
     }
 
     public static IEnumerable<string> SwitchWithIds(IEnumerable<string> input, Dictionary<string, string> idDictionary)
@@ -113,7 +126,7 @@ public static class DataCleaner
 
     public static Result<string> CompanyCleaning(string input)
     {
-        var companyRegex = new Regex(@"^[aA](\/ | \.)?[sS][aA.]?\z");
+        var companyRegex = new Regex(@"^[aA](\/|\.)?[sS][aA.]?\z");
 
         var cleanedInput = input.Trim();
 

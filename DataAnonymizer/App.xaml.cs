@@ -26,7 +26,6 @@ public partial class App : Application
         encryptKey = false;
         idDictionaryHandler = new IdDictionaryHandler();
         idDictionary = new Dictionary<string, string>();
-        columnTypeDict = new Dictionary<string, (bool, ColumnTypes)>();
     }
 
     internal string dataFilePath;
@@ -38,8 +37,8 @@ public partial class App : Application
 
     internal IdDictionaryHandler idDictionaryHandler;
     internal Dictionary<string, string> idDictionary;
-    internal Dictionary<string, List<string>> data;
-    internal Dictionary<string, (bool, ColumnTypes)> columnTypeDict;
+    internal List<List<string>> data;
+    internal (bool, ColumnTypes)[] columnTypeDict;
 
     /// <summary>
     /// Invoked when the application is launched normally by the end user.  Other entry points

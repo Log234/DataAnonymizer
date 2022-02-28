@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using DataAnonymizer.Consts;
 using DataAnonymizer.Utilities;
 using Microsoft.UI.Xaml;
@@ -66,7 +68,41 @@ public sealed partial class FileSelection : Page
             return;
         }
 
+        if (!parseResult.Value.Any())
+        {
+            window.AddMessage(new InfoBar
+            {
+                Severity = InfoBarSeverity.Warning,
+                Title = "It seems the data file does not contain any columns. Check the document formatting.",
+                IsOpen = true
+            });
+            return;
+        }
+
+        if (parseResult.Value.Any(column => column.Count == 0))
+        {
+            window.AddMessage(new InfoBar
+            {
+                Severity = InfoBarSeverity.Warning,
+                Title = "It seems the data file does not contain any rows. Check the document formatting.",
+                IsOpen = true
+            });
+            return;
+        }
+
+        if (parseResult.Value.Any(column => column.Count == 1))
+        {
+            window.AddMessage(new InfoBar
+            {
+                Severity = InfoBarSeverity.Warning,
+                Title = "It seems the data file only contains a header row, no actual data. Check the document formatting.",
+                IsOpen = true
+            });
+            return;
+        }
+
         app.data = parseResult.Value;
+        app.columnTypeDict = new (bool, ColumnTypes)[parseResult.Value.Count];
 
         if (string.IsNullOrWhiteSpace(app.keyFilePath))
         {
