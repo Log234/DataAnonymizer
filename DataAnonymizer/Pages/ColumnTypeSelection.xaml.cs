@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DataAnonymizer.Consts;
 using DataAnonymizer.Controls;
 using DataAnonymizer.Utilities;
@@ -32,35 +33,61 @@ public sealed partial class ColumnTypeSelection : Page
         }
     }
 
-    private void Previous_Click(object sender, RoutedEventArgs e)
-    {
-        StoreSelection();
-        Frame.GoBack(TransitionInfo.Default);
-    }
-
-    private void Next_Click(object sender, RoutedEventArgs e)
+    private void Previous_Click(object sender, RoutedEventArgs eventArgs)
     {
         var window = (MainWindow)_app.m_window;
-
-        StoreSelection();
-        var cleaningResult = DataCleaner.Clean(_app.data, _app.columnTypeDict, _app.idDictionary);
-
-        if (cleaningResult.IsFailure)
+        try
         {
+            StoreSelection();
+            Frame.GoBack(TransitionInfo.Default);
+        }
+        catch (Exception e)
+        {
+
             window.AddMessage(new InfoBar
             {
                 Severity = InfoBarSeverity.Error,
-                Title = $"Failed to clean the data:\n{cleaningResult.Error}",
+                Title = $"An unexpected exception occurred: {ExceptionUtilities.AggregateMessages(e)}",
                 IsOpen = true
             });
-            return;
         }
+    }
 
-        _app.data = cleaningResult.Value;
+    private void Next_Click(object sender, RoutedEventArgs eventArgs)
+    {
+        var window = (MainWindow)_app.m_window;
+        try
+        {
+            StoreSelection();
+            var cleaningResult = DataCleaner.Clean(_app.data, _app.columnTypeDict, _app.idDictionary);
+
+            if (cleaningResult.IsFailure)
+            {
+                window.AddMessage(new InfoBar
+                {
+                    Severity = InfoBarSeverity.Error,
+                    Title = $"Failed to clean the data:\n{cleaningResult.Error}",
+                    IsOpen = true
+                });
+                return;
+            }
+
+            _app.data = cleaningResult.Value;
 
 
 
-        Frame.Navigate(typeof(FileSave), null, TransitionInfo.Default);
+            Frame.Navigate(typeof(FileSave), null, TransitionInfo.Default);
+        }
+        catch (Exception e)
+        {
+
+            window.AddMessage(new InfoBar
+            {
+                Severity = InfoBarSeverity.Error,
+                Title = $"An unexpected exception occurred: {ExceptionUtilities.AggregateMessages(e)}",
+                IsOpen = true
+            });
+        }
     }
 
     private void StoreSelection()

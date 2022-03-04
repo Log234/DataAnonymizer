@@ -1,8 +1,9 @@
-﻿using System.IO;
-using DataAnonymizer.Consts;
+﻿using DataAnonymizer.Consts;
 using DataAnonymizer.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
+using System.IO;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -14,73 +15,123 @@ namespace DataAnonymizer.Pages;
 /// </summary>
 public sealed partial class FileSave : Page
 {
-    internal readonly App app;
+    private readonly App _app;
 
     public FileSave()
     {
         InitializeComponent();
-        app = Application.Current as App;
-        DataFilePath.Text = app.dataFileSavePath;
-        KeyFilePath.Text = app.keyFileSavePath;
+        _app = (App)Application.Current;
+        DataFilePath.Text = _app.dataFileSavePath;
+        KeyFilePath.Text = _app.keyFileSavePath;
     }
 
-    private async void SaveDataFile_ClickAsync(object sender, RoutedEventArgs e)
+    private async void SaveDataFile_ClickAsync(object sender, RoutedEventArgs eventArgs)
     {
-        var filePath = await FilePickers.SaveFileAsync("CSV", ".csv");
-        DataFilePath.Text = filePath;
-        app.dataFileSavePath = filePath;
-    }
-
-    private async void SaveKeyFile_ClickAsync(object sender, RoutedEventArgs e)
-    {
-        var filePath = await FilePickers.SaveFileAsync("JSON", ".json");
-        KeyFilePath.Text = filePath;
-        app.keyFileSavePath = filePath;
-    }
-
-    private void Previous_Click(object sender, RoutedEventArgs e)
-    {
-        Frame.GoBack(TransitionInfo.Default);
-    }
-
-    private void Next_Click(object sender, RoutedEventArgs e)
-    {
-        var window = (MainWindow)app.m_window;
-
-        if (string.IsNullOrWhiteSpace(app.dataFileSavePath))
+        var window = (MainWindow)_app.m_window;
+        try
+        {
+            var filePath = await FilePickers.SaveFileAsync("CSV", ".csv");
+            DataFilePath.Text = filePath;
+            _app.dataFileSavePath = filePath;
+        }
+        catch (Exception e)
         {
             window.AddMessage(new InfoBar
             {
-                Severity = InfoBarSeverity.Warning,
-                Title = "Please select where to save the data file.",
+                Severity = InfoBarSeverity.Error,
+                Title = $"An unexpected exception occurred: {ExceptionUtilities.AggregateMessages(e)}",
                 IsOpen = true
             });
-            return;
         }
+    }
 
-        if (string.IsNullOrWhiteSpace(app.keyFileSavePath))
+    private async void SaveKeyFile_ClickAsync(object sender, RoutedEventArgs eventArgs)
+    {
+        var window = (MainWindow)_app.m_window;
+        try
+        {
+            var filePath = await FilePickers.SaveFileAsync("JSON", ".json");
+            KeyFilePath.Text = filePath;
+            _app.keyFileSavePath = filePath;
+        }
+        catch (Exception e)
         {
             window.AddMessage(new InfoBar
             {
-                Severity = InfoBarSeverity.Warning,
-                Title = "Please select where to save the key file.",
+                Severity = InfoBarSeverity.Error,
+                Title = $"An unexpected exception occurred: {ExceptionUtilities.AggregateMessages(e)}",
                 IsOpen = true
             });
-            return;
         }
+    }
 
-        app.encryptKey = ShouldEncrypt.IsOn;
+    private void Previous_Click(object sender, RoutedEventArgs eventArgs)
+    {
+        var window = (MainWindow)_app.m_window;
+        try
+        {
+            Frame.GoBack(TransitionInfo.Default);
+        }
+        catch (Exception e)
+        {
+            window.AddMessage(new InfoBar
+            {
+                Severity = InfoBarSeverity.Error,
+                Title = $"An unexpected exception occurred: {ExceptionUtilities.AggregateMessages(e)}",
+                IsOpen = true
+            });
+        }
+    }
 
-        var dataDirPath = Path.GetDirectoryName(app.dataFileSavePath);
-        var keyDirPath = Path.GetDirectoryName(app.keyFileSavePath);
+    private void Next_Click(object sender, RoutedEventArgs eventArgs)
+    {
+        var window = (MainWindow)_app.m_window;
+        try
+        {
+            if (string.IsNullOrWhiteSpace(_app.dataFileSavePath))
+            {
+                window.AddMessage(new InfoBar
+                {
+                    Severity = InfoBarSeverity.Warning,
+                    Title = "Please select where to save the data file.",
+                    IsOpen = true
+                });
+                return;
+            }
 
-        Directory.CreateDirectory(dataDirPath);
-        Directory.CreateDirectory(keyDirPath);
+            if (string.IsNullOrWhiteSpace(_app.keyFileSavePath))
+            {
+                window.AddMessage(new InfoBar
+                {
+                    Severity = InfoBarSeverity.Warning,
+                    Title = "Please select where to save the key file.",
+                    IsOpen = true
+                });
+                return;
+            }
 
-        CsvWriter.Write(app.data, app.dataFileSavePath);
+            _app.encryptKey = ShouldEncrypt.IsOn;
 
-        app.idDictionaryHandler.SaveDictionary(app.idDictionary, app.keyFileSavePath, app.encryptKey);
+            var dataDirPath = Path.GetDirectoryName(_app.dataFileSavePath);
+            var keyDirPath = Path.GetDirectoryName(_app.keyFileSavePath);
 
-        Frame.Navigate(typeof(Finish), null, TransitionInfo.Default);
+            Directory.CreateDirectory(dataDirPath);
+            Directory.CreateDirectory(keyDirPath);
+
+            CsvWriter.Write(_app.data, _app.dataFileSavePath);
+
+            _app.idDictionaryHandler.SaveDictionary(_app.idDictionary, _app.keyFileSavePath, _app.encryptKey);
+
+            Frame.Navigate(typeof(Finish), null, TransitionInfo.Default);
+        }
+        catch (Exception e)
+        {
+            window.AddMessage(new InfoBar
+            {
+                Severity = InfoBarSeverity.Error,
+                Title = $"An unexpected exception occurred: {ExceptionUtilities.AggregateMessages(e)}",
+                IsOpen = true
+            });
+        }
     }
 }

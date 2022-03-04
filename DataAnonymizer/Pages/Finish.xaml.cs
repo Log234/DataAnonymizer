@@ -8,17 +8,17 @@ namespace DataAnonymizer.Pages;
 /// </summary>
 public sealed partial class Finish : Page
 {
-    internal readonly App app;
+    private readonly App _app;
 
     public Finish()
     {
         InitializeComponent();
-        app = Application.Current as App;
+        _app = (App)Application.Current;
 
-        if (app.encryptKey && !app.idDictionaryHandler.KeyWasSet)
+        if (_app.encryptKey && !_app.idDictionaryHandler.KeyWasSet)
         {
             EncryptionInfo.Visibility = Visibility.Visible;
-            EncryptionKey.Text = app.idDictionaryHandler.GetEncryptionKey();
+            EncryptionKey.Text = _app.idDictionaryHandler.GetEncryptionKey();
         }
     }
 }
