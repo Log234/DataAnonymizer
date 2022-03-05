@@ -60,13 +60,10 @@ jobs:
     
     - name: Update manifest version
       run: |
-        [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
         $path = "DataAnonymizer/Package.appxmanifest"
-        $doc = [System.Xml.Linq.XDocument]::Load($path)
-        $xName = [System.Xml.Linq.XName]::Get(http://schemas.microsoft.com/appx/manifest/foundation/windows10}Identity")
-        $doc.Root.Element($xName).Attribute("Version").Value =
-          "${{ steps.tag_version.outputs.new_version }}.0";
-        $doc.Save($path)
+        [xml]$manifest= get-content $path
+        $manifest.Package.Identity.Version = "${{ steps.tag_version.outputs.new_version }}.0"
+        $manifest.save($path)
 
     # Create the app package by building and packaging the project
     - name: Create the app package
