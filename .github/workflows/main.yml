@@ -29,6 +29,12 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Bump version and push tag
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v1
@@ -51,6 +57,18 @@ jobs:
         $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
         $certificatePath = "DataAnonymizer/GitHubActionsWorkflow.pfx"
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+    
+    - name: Update manifest version
+      run: |
+        [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
+        $path = "DataAnonymizer/Package.appxmanifest"
+        $doc = [System.Xml.Linq.XDocument]::Load($path)
+        $xName =
+          [System.Xml.Linq.XName]
+            "{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Identity"
+        $doc.Root.Element($xName).Attribute("Version").Value =
+          "${{ steps.tag_version.outputs.new_version }}.0";
+        $doc.Save($path)
 
     # Create the app package by building and packaging the project
     - name: Create the app package
@@ -76,3 +94,14 @@ jobs:
       with:
         name: DataAnonymizer ${{ matrix.platform }}
         path: ./*.msix
+
+    - name: Create a GitHub release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ steps.tag_version.outputs.new_tag }}
+        name: Release ${{ steps.tag_version.outputs.new_tag }}
+        body: ${{ steps.tag_version.outputs.changelog }}
+        artifacts: "./*.msix"
+        generateReleaseNotes: true
+        allowUpdates: true
+        token: ${{ secrets.GITHUB_TOKEN }}
