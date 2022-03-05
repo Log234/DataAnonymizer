@@ -28,9 +28,6 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    
-    - name: Debug
-      run: Write-Output $env:Platform
 
     # Install the .NET Core workload
     - name: Install .NET Core
@@ -77,5 +74,5 @@ jobs:
     - name: Upload MSIX package
       uses: actions/upload-artifact@v2
       with:
-        name: DataAnonymizer ${{ env.platform }}
+        name: DataAnonymizer ${{ matrix.platform }}
         path: ./*.msix
