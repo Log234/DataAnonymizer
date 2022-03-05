@@ -74,5 +74,5 @@ jobs:
     - name: Upload MSIX package
       uses: actions/upload-artifact@v2
       with:
-        name: DataAnonymizer ${{ env.Platform }}
+        name: DataAnonymizer ${{ env.platform }}
         path: ./*.msix
