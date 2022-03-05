@@ -30,7 +30,7 @@ jobs:
         fetch-depth: 0
     
     - name: Debug
-      run: Write-Output ${{ env.platform }}
+      run: Write-Output $env.Platform
 
     # Install the .NET Core workload
     - name: Install .NET Core
