@@ -66,9 +66,13 @@ jobs:
     - name: Remove the pfx
       run: Remove-Item -path DataAnonymizer/GitHubActionsWorkflow.pfx
 
+    # Move package
+    - name: Move package
+      run: Move-Item DataAnonymizer/Packages/DataAnonymizer*/*.msix ./
+
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload MSIX package
       uses: actions/upload-artifact@v2
       with:
         name: DataAnonymizer ${{ env.Platform }}
-        path: DataAnonymizer/Packages/DataAnonymizer*/*.msix
+        path: ./*.msix
