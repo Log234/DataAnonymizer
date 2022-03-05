@@ -66,15 +66,8 @@ jobs:
     - name: Remove the pfx
       run: Remove-Item -path DataAnonymizer/GitHubActionsWorkflow.pfx
 
-    - name: List root
-      run: ls
-
-    - name: List DataAnonymizer
-      run: ls .\DataAnonymizer
-
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload MSIX package
       uses: actions/upload-artifact@v2
       with:
-        name: MSIX Package
-        path: DataAnonymizer/Packages
+        path: DataAnonymizer/Packages/DataAnonymizer*.msix
