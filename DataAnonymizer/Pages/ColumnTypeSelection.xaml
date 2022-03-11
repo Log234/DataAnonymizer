@@ -18,7 +18,7 @@
             <TextBlock FontSize="50">Select column types</TextBlock>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" Width="900" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}" Padding="20,10,20,10">
-            <TextBlock Width="200">Column Name</TextBlock>
+            <TextBlock Width="200">Column name</TextBlock>
             <TextBlock Width="200">Data example</TextBlock>
             <TextBlock Width="120">Anonymize field</TextBlock>
             <TextBlock Width="370">Column type</TextBlock>
